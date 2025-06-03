@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Hub</title>
+    
+    <!-- OpenSearch Description -->
+    <link rel="search" type="application/opensearchdescription+xml" title="SearchHub" href="/public/opensearch.xml">
+    
+    <link rel="stylesheet" type="text/css" href="/public/searchHub.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 SearchHub</h1>
+            <p>What Should i Search With Today?</p>
+        </div>
+
+        <div class="search-box">
+            <input type="text" class="search-input" placeholder="Enter your search query..." id="searchInput">
+            <button class="search-btn" onclick="performSearch()">Search</button>
+        </div>
+
+        <div class="query-display" id="queryDisplay">
+            Searching for: <strong id="currentQuery"></strong>
+        </div>
+
+        <div class="engines-grid" id="enginesGrid">
+            <!-- Search engines will be populated here -->
+        </div>
+
+        <div class="settings-section">
+            <div class="settings-header">
+                <h3>Manage Search Engines</h3>
+                <button class="btn" onclick="toggleAddForm()">Add Engine</button>
+            </div>
+            
+            <div class="add-engine-form" id="addEngineForm">
+                <input type="text" id="engineName" placeholder="Engine Name (e.g., Google)">
+                <input type="text" id="engineUrl" placeholder="Search URL (use {query} as placeholder)">
+                <input type="text" id="engineDescription" placeholder="Description (optional)">
+                <button class="btn btn-primary" onclick="addEngine()">Add</button>
+                <button class="btn" onclick="resetEngines()">Reset to Default</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/public/searchHub.js"></script>
+</body>
+</html>
