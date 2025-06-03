@@ -99,16 +99,43 @@ function renderEngines() {
     searchEngines.forEach((engine, index) => {
         const card = document.createElement('div');
         card.className = 'engine-card';
-        card.innerHTML = `
-            <button class="remove-btn" onclick="removeEngine(${index})" title="Remove engine">×</button>
-            <div class="engine-favicon">
-                <img src="${engine.favicon}" alt="${engine.name}" onerror="this.src='data:image/svg+xml,<svg xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" fill=\\"%23666\\"><path d=\\"M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z\\"/></svg>
-            </div>
-            <div class="engine-name">${engine.name}</div>
-            <div class="engine-description">${engine.description || ''}</div>
-        `;
         
-        card.addEventListener('click', () => {
+        // Create elements separately to avoid innerHTML escaping issues
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'remove-btn';
+        removeBtn.innerHTML = '×';
+        removeBtn.title = 'Remove engine';
+        removeBtn.onclick = () => removeEngine(index);
+        
+        const faviconDiv = document.createElement('div');
+        faviconDiv.className = 'engine-favicon';
+        
+        const faviconImg = document.createElement('img');
+        faviconImg.src = engine.favicon;
+        faviconImg.alt = engine.name;
+        faviconImg.onerror = function() {
+            this.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>';
+        };
+        
+        const nameDiv = document.createElement('div');
+        nameDiv.className = 'engine-name';
+        nameDiv.textContent = engine.name;
+        
+        const descDiv = document.createElement('div');
+        descDiv.className = 'engine-description';
+        descDiv.textContent = engine.description || '';
+        
+        // Append elements
+        faviconDiv.appendChild(faviconImg);
+        card.appendChild(removeBtn);
+        card.appendChild(faviconDiv);
+        card.appendChild(nameDiv);
+        card.appendChild(descDiv);
+        
+        card.addEventListener('click', (e) => {
+            // Don't trigger if clicking remove button
+            if (e.target === removeBtn) return;
+            
             if (currentQuery) {
                 const searchUrl = engine.url.replace('{query}', encodeURIComponent(currentQuery));
                 window.open(searchUrl, '_blank');
@@ -122,9 +149,42 @@ function renderEngines() {
 }
 
 // Toggle add engine form
-function toggleAddForm() {
-    const form = document.getElementById('addEngineForm');
-    form.style.display = form.style.display === 'flex' ? 'none' : 'flex';
+function openAddModal() {
+    document.getElementById('addEngineModal').style.display = 'block';
+    // Clear form
+    document.getElementById('engineName').value = '';
+    document.getElementById('engineUrl').value = '';
+    document.getElementById('engineDescription').value = '';
+    document.getElementById('engineFavicon').value = '';
+}
+
+function closeAddModal() {
+    document.getElementById('addEngineModal').style.display = 'none';
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('addEngineModal');
+    if (event.target === modal) {
+        closeAddModal();
+    }
+}
+
+// Close modal with Escape key
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        closeAddModal();
+    }
+});
+
+// Auto-detect favicon from URL
+function getFaviconUrl(searchUrl) {
+    try {
+        const url = new URL(searchUrl.replace('{query}', 'test'));
+        return `https://www.google.com/s2/favicons?domain=${url.hostname}&sz=32`;
+    } catch {
+        return 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>';
+    }
 }
 
 // Add new engine
@@ -132,9 +192,11 @@ function addEngine() {
     const name = document.getElementById('engineName').value.trim();
     const url = document.getElementById('engineUrl').value.trim();
     const description = document.getElementById('engineDescription').value.trim();
+    const customFavicon = document.getElementById('engineFavicon').value.trim();
 
     if (name && url) {
-        const favicon = `https://www.google.com/s2/favicons?domain=${new URL(url.replace('{query}', 'test')).hostname}&sz=32`;
+        // Use custom favicon if provided, otherwise auto-detect
+        const favicon = customFavicon || getFaviconUrl(url);
         
         searchEngines.push({
             name,
@@ -145,12 +207,7 @@ function addEngine() {
         
         saveEngines();
         renderEngines();
-        
-        // Clear form
-        document.getElementById('engineName').value = '';
-        document.getElementById('engineUrl').value = '';
-        document.getElementById('engineDescription').value = '';
-        document.getElementById('addEngineForm').style.display = 'none';
+        closeAddModal();
     } else {
         alert('Please provide at least a name and URL');
     }

@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Search Hub</title>
+    <title>SearchHub</title>
     
     <!-- OpenSearch Description -->
-    <link rel="search" type="application/opensearchdescription+xml" title="SearchHub" href="/public/opensearch.xml">
+    <link rel="search" type="application/opensearchdescription+xml" title="SearchHub" href="/opensearch.xml">
     
     <link rel="stylesheet" type="text/css" href="/public/searchHub.css">
 </head>
@@ -14,7 +14,7 @@
     <div class="container">
         <div class="header">
             <h1>🔍 SearchHub</h1>
-            <p>What Should i Search With Today?</p>
+            <h2>What Should I Search With Today?</h2>
         </div>
 
         <div class="search-box">
@@ -33,15 +33,45 @@
         <div class="settings-section">
             <div class="settings-header">
                 <h3>Manage Search Engines</h3>
-                <button class="btn" onclick="toggleAddForm()">Add Engine</button>
+                <button class="btn" onclick="openAddModal()">Add Engine</button>
             </div>
             
-            <div class="add-engine-form" id="addEngineForm">
-                <input type="text" id="engineName" placeholder="Engine Name (e.g., Google)">
-                <input type="text" id="engineUrl" placeholder="Search URL (use {query} as placeholder)">
-                <input type="text" id="engineDescription" placeholder="Description (optional)">
-                <button class="btn btn-primary" onclick="addEngine()">Add</button>
-                <button class="btn" onclick="resetEngines()">Reset to Default</button>
+            <button class="btn" onclick="resetEngines()" style="margin-top: 10px;">Reset to Default</button>
+        </div>
+
+        <!-- Add Engine Modal -->
+        <div id="addEngineModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Add Search Engine</h3>
+                    <button class="close-btn" onclick="closeAddModal()">&times;</button>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="engineName">Engine Name *</label>
+                    <input type="text" id="engineName" class="form-input" placeholder="e.g., Google">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="engineUrl">Search URL *</label>
+                    <input type="text" id="engineUrl" class="form-input" placeholder="e.g., https://www.google.com/search?q={query}">
+                    <small style="color: #666; font-size: 0.85rem;">Use {query} as placeholder for the search term</small>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="engineDescription">Description</label>
+                    <input type="text" id="engineDescription" class="form-input" placeholder="Brief description (optional)">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="engineFavicon">Favicon URL</label>
+                    <input type="text" id="engineFavicon" class="form-input" placeholder="Will be auto-detected if left empty">
+                </div>
+                
+                <div class="modal-actions">
+                    <button class="btn-modal btn-cancel" onclick="closeAddModal()">Cancel</button>
+                    <button class="btn-modal btn-add" onclick="addEngine()">Add Engine</button>
+                </div>
             </div>
         </div>
     </div>
