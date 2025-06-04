@@ -149,8 +149,10 @@ function renderEngines() {
 }
 
 // Toggle add engine form
+// Update your existing functions:
 function openAddModal() {
     document.getElementById('addEngineModal').style.display = 'block';
+    document.body.classList.add('modal-open'); // Prevent body scroll
     // Clear form
     document.getElementById('engineName').value = '';
     document.getElementById('engineUrl').value = '';
@@ -160,6 +162,7 @@ function openAddModal() {
 
 function closeAddModal() {
     document.getElementById('addEngineModal').style.display = 'none';
+    document.body.classList.remove('modal-open'); // Restore body scroll
 }
 
 // Close modal when clicking outside
@@ -230,6 +233,8 @@ function resetEngines() {
         renderEngines();
     }
 }
+
+
 
 // Initialize the app
 init();

@@ -171,6 +171,8 @@ body {
 }
 
 /* Modal styles */
+/* Replace your existing modal styles with these: */
+
 .modal {
     display: none;
     position: fixed;
@@ -181,17 +183,61 @@ body {
     height: 100%;
     background-color: rgba(0,0,0,0.5);
     backdrop-filter: blur(5px);
+    padding: 20px;
+    box-sizing: border-box;
+    overflow: hidden; /* Prevent page scrollbar */
+    /* Use flexbox when visible */
+    align-items: center;
+    justify-content: center;
+}
+
+/* Show modal with flexbox */
+.modal[style*="block"] {
+    display: flex !important;
 }
 
 .modal-content {
     background: white;
-    margin: 10% auto;
     padding: 30px;
     border-radius: 15px;
-    width: 90%;
+    width: 100%;
     max-width: 500px;
+    max-height: calc(100vh - 40px); /* Prevent overflow on short screens */
     position: relative;
     box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    
+    margin: 0;
+    /* Prevent shrinking */
+    flex-shrink: 0;
+}
+
+/* Update mobile styles */
+@media (max-width: 768px) {
+    .modal {
+        padding: 15px;
+    }
+    
+    .modal-content {
+        padding: 25px;
+        max-width: none;
+        max-height: calc(100vh - 30px);
+    }
+}
+
+@media (max-width: 480px) {
+    .modal {
+        padding: 10px;
+    }
+    
+    .modal-content {
+        padding: 20px;
+        max-height: calc(100vh - 20px);
+    }
+}
+
+/* Additional fix for body scroll prevention */
+body.modal-open {
+    overflow: hidden;
 }
 
 .modal-header {
