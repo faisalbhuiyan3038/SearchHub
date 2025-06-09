@@ -1,13 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+<OpenSearchDescription
+    xmlns="http://a9.com/-/spec/opensearch/1.1/"
+    xmlns:moz="http://www.mozilla.org/2006/browser/search/">
     <ShortName>SearchHub</ShortName>
-    <Description>What Should I Search With Today</Description>
+    <Description>Customizable Search Engine Proxy</Description>
     <InputEncoding>UTF-8</InputEncoding>
-    <Image width="16" height="16" type="image/x-icon"><svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔍</text></svg></Image>
-    <Url type="text/html" template="https://search-hub.netlify.app/?q={searchTerms}"/>
-    <Developer>Faisal Bhuiyan</Developer>
-    <Contact>faisalbhuiyan3038@gmail.com</Contact>
-    <SyndicationRight>open</SyndicationRight>
-    <AdultContent>false</AdultContent>
-    <Language>en-us</Language>
+    <Image width="16" height="16" type="image/x-icon">🔍</Image>
+    <Url type="text/html" template="https://search-hub.netlify.app/?q={searchTerms}" />
 </OpenSearchDescription>
