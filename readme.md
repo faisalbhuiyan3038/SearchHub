@@ -2,7 +2,8 @@
 
 A beautiful, customizable search engine dispatcher that lets users choose their preferred search engine for any query. Instead of being locked into one search engine, SearchHub presents an elegant interface where users can select from multiple search engines after entering their query.
 
-![SearchHub Demo](https://via.placeholder.com/800x400/667eea/ffffff?text=SearchHub+Demo)
+![SearchHub Demo](![image](https://github.com/user-attachments/assets/7d751047-3b14-46c2-800a-5a68f41f0226)
+)
 
 ## ✨ Features
 
