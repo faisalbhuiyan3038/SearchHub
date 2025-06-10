@@ -1,4 +1,3 @@
-// Default search engines
 const defaultEngines = [
     {
         name: 'Google',
@@ -19,33 +18,79 @@ const defaultEngines = [
         favicon: 'https://duckduckgo.com/favicon.ico'
     },
     {
-        name: 'Yahoo',
-        url: 'https://search.yahoo.com/search?p={query}',
-        description: 'Yahoo Search',
-        favicon: 'https://www.yahoo.com/favicon.ico'
-    },
-    {
-        name: 'Startpage',
-        url: 'https://www.startpage.com/sp/search?query={query}',
-        description: 'Private Google results',
-        favicon: 'https://www.startpage.com/favicon.ico'
-    },
-    {
         name: 'Yandex',
         url: 'https://yandex.com/search/?text={query}',
         description: 'Russian search engine',
         favicon: 'https://yandex.com/favicon.ico'
+    },
+    {
+        name: 'Brave',
+        url: 'https://search.brave.com/search?q={query}',
+        description: 'Brave\'s privacy-focused search engine',
+        favicon: 'https://www.google.com/s2/favicons?domain=search.brave.com&sz=32'
+    },
+    {
+        name: 'SearX',
+        url: 'https://searx.fmhy.net/search?q={query}',
+        description: 'A privacy-respecting metasearch engine',
+        favicon: 'https://www.google.com/s2/favicons?domain=searx.fmhy.net&sz=32'
+    },
+    {
+        name: 'Mojeek',
+        url: 'https://www.mojeek.com/search?q={query}',
+        description: 'British search engine with its own index',
+        favicon: 'https://www.mojeek.com/favicon.ico'
+    },
+    {
+        name: 'Qwant',
+        url: 'https://www.qwant.com/?q={query}',
+        description: 'European search engine focused on privacy',
+        favicon: 'https://www.qwant.com/favicon.ico'
+    },
+    {
+        name: 'Perplexity',
+        url: 'https://www.perplexity.ai/search?q={query}',
+        description: 'AI-powered search engine',
+        favicon: 'https://www.perplexity.ai/favicon.ico'
+    },
+    {
+        name: 'ChatGPT',
+        url: 'https://chagpt.com/?q={query}',
+        description: 'OpenAI\'s conversational AI',
+        favicon: 'https://chatgpt.com/favicon.ico'
+    },
+    {
+        name: 'Grok',
+        url: 'https://grok.com/?q={query}',
+        description: 'Elon Musk\'s AI search engine',
+        favicon: 'https://grok.com/favicon.ico'
+    },
+    {
+        name: 'Scira',
+        url: 'https://scira.ai/?q={query}',
+        description: 'AI search powered by Grok',
+        favicon: 'https://scira.ai/favicon.ico'
+    },
+    {
+        name: 'Copilot',
+        url: 'https://copilot.microsoft.com/?q={query}',
+        description: 'Microsoft\'s AI-powered search assistant',
+        favicon: 'https://copilot.microsoft.com/favicon.ico'
     }
 ];
 
 let currentQuery = '';
 let searchEngines = [];
+let isEditMode = false;
+let openInNewTab = true;
 
 // Initialize
 function init() {
     loadEngines();
+    loadSettings();
     handleUrlQuery();
     renderEngines();
+    setupSettings();
 }
 
 // Load engines from storage or use defaults
@@ -54,9 +99,20 @@ function loadEngines() {
     searchEngines = stored ? JSON.parse(stored) : [...defaultEngines];
 }
 
+// Load settings from storage
+function loadSettings() {
+    const stored = localStorage.getItem('openInNewTab');
+    openInNewTab = stored !== null ? JSON.parse(stored) : true;
+}
+
 // Save engines to storage
 function saveEngines() {
     localStorage.setItem('searchEngines', JSON.stringify(searchEngines));
+}
+
+// Save settings to storage
+function saveSettings() {
+    localStorage.setItem('openInNewTab', JSON.stringify(openInNewTab));
 }
 
 // Handle URL query parameter
@@ -68,6 +124,7 @@ function handleUrlQuery() {
         document.getElementById('searchInput').value = currentQuery;
         document.getElementById('currentQuery').textContent = currentQuery;
         document.getElementById('queryDisplay').style.display = 'block';
+        document.getElementById('clearSearchBtn').style.display = currentQuery ? 'block' : 'none';
     }
 }
 
@@ -78,18 +135,54 @@ function performSearch() {
         currentQuery = query;
         document.getElementById('currentQuery').textContent = currentQuery;
         document.getElementById('queryDisplay').style.display = 'block';
+        document.getElementById('clearSearchBtn').style.display = 'block';
         // Update URL without page reload
         const newUrl = `${window.location.origin}${window.location.pathname}?q=${encodeURIComponent(query)}`;
         history.pushState({}, '', newUrl);
     }
 }
 
+// Clear search input
+function clearSearch() {
+    currentQuery = '';
+    document.getElementById('searchInput').value = '';
+    document.getElementById('currentQuery').textContent = '';
+    document.getElementById('queryDisplay').style.display = 'none';
+    document.getElementById('clearSearchBtn').style.display = 'none';
+    // Clear URL query parameter
+    const newUrl = `${window.location.origin}${window.location.pathname}`;
+    history.pushState({}, '', newUrl);
+}
+
 // Handle Enter key in search input
-document.getElementById('searchInput').addEventListener('keypress', function(e) {
+document.getElementById('searchInput').addEventListener('keypress', function (e) {
     if (e.key === 'Enter') {
         performSearch();
     }
 });
+
+// Update search input event listener to show/hide clear button
+document.getElementById('searchInput').addEventListener('input', function () {
+    document.getElementById('clearSearchBtn').style.display = this.value ? 'block' : 'none';
+});
+
+// Toggle edit mode
+function toggleEditMode() {
+    isEditMode = !isEditMode;
+    const editBtn = document.getElementById('editToggleBtn');
+    editBtn.textContent = isEditMode ? 'Done' : 'Edit';
+    renderEngines();
+}
+
+// Setup settings modal
+function setupSettings() {
+    const openInNewTabCheckbox = document.getElementById('openInNewTab');
+    openInNewTabCheckbox.checked = openInNewTab;
+    openInNewTabCheckbox.addEventListener('change', function () {
+        openInNewTab = this.checked;
+        saveSettings();
+    });
+}
 
 // Render search engines
 function renderEngines() {
@@ -99,61 +192,125 @@ function renderEngines() {
     searchEngines.forEach((engine, index) => {
         const card = document.createElement('div');
         card.className = 'engine-card';
-        
-        // Create elements separately to avoid innerHTML escaping issues
+        card.setAttribute('draggable', isEditMode ? 'true' : 'false');
+        card.dataset.index = index;
+
+        // Drag and drop event listeners
+        if (isEditMode) {
+            card.addEventListener('dragstart', dragStart);
+            card.addEventListener('dragover', dragOver);
+            card.addEventListener('dragenter', dragEnter);
+            card.addEventListener('dragleave', dragLeave);
+            card.addEventListener('drop', drop);
+            card.addEventListener('dragend', dragEnd);
+        }
+
+        // Create elements
         const removeBtn = document.createElement('button');
         removeBtn.className = 'remove-btn';
         removeBtn.innerHTML = '×';
         removeBtn.title = 'Remove engine';
+        removeBtn.style.display = isEditMode ? 'block' : 'none';
         removeBtn.onclick = () => removeEngine(index);
-        
+
         const faviconDiv = document.createElement('div');
         faviconDiv.className = 'engine-favicon';
-        
+
         const faviconImg = document.createElement('img');
         faviconImg.src = engine.favicon;
         faviconImg.alt = engine.name;
-        faviconImg.onerror = function() {
+        faviconImg.onerror = function () {
             this.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>';
         };
-        
+
         const nameDiv = document.createElement('div');
         nameDiv.className = 'engine-name';
         nameDiv.textContent = engine.name;
-        
+
         const descDiv = document.createElement('div');
         descDiv.className = 'engine-description';
         descDiv.textContent = engine.description || '';
-        
+
         // Append elements
         faviconDiv.appendChild(faviconImg);
         card.appendChild(removeBtn);
         card.appendChild(faviconDiv);
         card.appendChild(nameDiv);
         card.appendChild(descDiv);
-        
-        card.addEventListener('click', (e) => {
-            // Don't trigger if clicking remove button
-            if (e.target === removeBtn) return;
-            
-            if (currentQuery) {
-                const searchUrl = engine.url.replace('{query}', encodeURIComponent(currentQuery));
-                window.open(searchUrl, '_blank');
-            } else {
-                alert('Please enter a search query first');
-            }
-        });
+
+        if (!isEditMode) {
+            card.addEventListener('click', (e) => {
+                if (e.target === removeBtn) return;
+                if (currentQuery) {
+                    const searchUrl = engine.url.replace('{query}', encodeURIComponent(currentQuery));
+                    window.open(searchUrl, openInNewTab ? '_blank' : '_self');
+                } else {
+                    alert('Please enter a search query first');
+                }
+            });
+        }
 
         grid.appendChild(card);
     });
 }
 
+// Drag and drop handlers
+let draggedItem = null;
+
+function dragStart(e) {
+    draggedItem = e.target;
+    setTimeout(() => {
+        e.targ
+        System: et.style.opacity = '0.5';
+    }, 0);
+}
+
+function dragOver(e) {
+    e.preventDefault();
+}
+
+function dragEnter(e) {
+    e.preventDefault();
+    if (e.target.classList.contains('engine-card')) {
+        e.target.classList.add('drag-over');
+    }
+}
+
+function dragLeave(e) {
+    if (e.target.classList.contains('engine-card')) {
+        e.target.classList.remove('drag-over');
+    }
+}
+
+function drop(e) {
+    e.preventDefault();
+    if (e.target.classList.contains('engine-card')) {
+        const target = e.target;
+        const draggedIndex = parseInt(draggedItem.dataset.index);
+        const targetIndex = parseInt(target.dataset.index);
+
+        // Reorder array
+        const [draggedEngine] = searchEngines.splice(draggedIndex, 1);
+        searchEngines.splice(targetIndex, 0, draggedEngine);
+
+        saveEngines();
+        renderEngines();
+        target.classList.remove('drag-over');
+    }
+}
+
+function dragEnd(e) {
+    e.target.style.opacity = '1';
+    document.querySelectorAll('.engine-card').forEach(card => {
+        card.classList.remove('drag-over');
+    });
+    draggedItem = null;
+}
+
 // Toggle add engine form
-// Update your existing functions:
 function openAddModal() {
     document.getElementById('addEngineModal').style.display = 'block';
-    document.body.classList.add('modal-open'); // Prevent body scroll
-    // Clear form
+    document.body.classList.add('modal-open');
     document.getElementById('engineName').value = '';
     document.getElementById('engineUrl').value = '';
     document.getElementById('engineDescription').value = '';
@@ -162,21 +319,37 @@ function openAddModal() {
 
 function closeAddModal() {
     document.getElementById('addEngineModal').style.display = 'none';
-    document.body.classList.remove('modal-open'); // Restore body scroll
+    document.body.classList.remove('modal-open');
 }
 
-// Close modal when clicking outside
-window.onclick = function(event) {
-    const modal = document.getElementById('addEngineModal');
-    if (event.target === modal) {
+// Open settings modal
+function openSettingsModal() {
+    document.getElementById('settingsModal').style.display = 'block';
+    document.body.classList.add('modal-open');
+}
+
+function closeSettingsModal() {
+    document.getElementById('settingsModal').style.display = 'none';
+    document.body.classList.remove('modal-open');
+}
+
+// Close modals when clicking outside
+window.onclick = function (event) {
+    const addModal = document.getElementById('addEngineModal');
+    const settingsModal = document.getElementById('settingsModal');
+    if (event.target === addModal) {
         closeAddModal();
+    }
+    if (event.target === settingsModal) {
+        closeSettingsModal();
     }
 }
 
-// Close modal with Escape key
-document.addEventListener('keydown', function(event) {
+// Close modals with Escape key
+document.addEventListener('keydown', function (event) {
     if (event.key === 'Escape') {
         closeAddModal();
+        closeSettingsModal();
     }
 });
 
@@ -198,16 +371,15 @@ function addEngine() {
     const customFavicon = document.getElementById('engineFavicon').value.trim();
 
     if (name && url) {
-        // Use custom favicon if provided, otherwise auto-detect
         const favicon = customFavicon || getFaviconUrl(url);
-        
+
         searchEngines.push({
             name,
             url,
             description,
             favicon
         });
-        
+
         saveEngines();
         renderEngines();
         closeAddModal();
@@ -234,7 +406,49 @@ function resetEngines() {
     }
 }
 
+// Export search engines to JSON
+function exportEngines() {
+    const dataStr = JSON.stringify(searchEngines, null, 2);
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'searchhub_engines.json';
+    a.click();
+    URL.revokeObjectURL(url);
+}
 
+// Import search engines from JSON
+function importEngines() {
+    const input = document.getElementById('importEngines');
+    const file = input.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            try {
+                const importedEngines = JSON.parse(e.target.result);
+                // Validate imported engines
+                if (Array.isArray(importedEngines) && importedEngines.every(engine =>
+                    engine.name && typeof engine.name === 'string' &&
+                    engine.url && typeof engine.url === 'string'
+                )) {
+                    searchEngines = importedEngines;
+                    saveEngines();
+                    renderEngines();
+                    alert('Search engines imported successfully');
+                    input.value = ''; // Clear file input
+                } else {
+                    alert('Invalid JSON format. Please ensure the file contains a valid array of search engines.');
+                }
+            } catch (error) {
+                alert('Error importing search engines: ' + error.message);
+            }
+        };
+        reader.readAsText(file);
+    } else {
+        alert('Please select a JSON file to import');
+    }
+}
 
 // Initialize the app
 init();

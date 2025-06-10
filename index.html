@@ -26,7 +26,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1 href="/" style="cursor: pointer; " onclick="window.location.href='/'">
+            <h1 href="/" style="cursor: pointer;" onclick="window.location.href='/'">
                 🔍 SearchHub
             </h1>
             <h2>What Should I Search With Today?</h2>
@@ -34,6 +34,7 @@
 
         <div class="search-box">
             <input type="text" class="search-input" placeholder="Enter your search query..." id="searchInput">
+            <button class="clear-btn" id="clearSearchBtn" onclick="clearSearch()">×</button>
             <button class="search-btn" onclick="performSearch()">Search</button>
         </div>
 
@@ -48,7 +49,11 @@
         <div class="settings-section">
             <div class="settings-header">
                 <h3>Manage Search Engines</h3>
-                <button class="btn" onclick="openAddModal()">Add Engine</button>
+                <div>
+                    <button class="btn" onclick="openAddModal()">Add Engine</button>
+                    <button class="btn" id="editToggleBtn" onclick="toggleEditMode()">Edit</button>
+                    <button class="btn" onclick="openSettingsModal()">Settings</button>
+                </div>
             </div>
             
             <button class="btn" onclick="resetEngines()" style="margin-top: 10px;">Reset to Default</button>
@@ -59,7 +64,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h3>Add Search Engine</h3>
-                    <button class="close-btn" onclick="closeAddModal()">&times;</button>
+                    <button class="close-btn" onclick="closeAddModal()">×</button>
                 </div>
                 
                 <div class="form-group">
@@ -86,6 +91,36 @@
                 <div class="modal-actions">
                     <button class="btn-modal btn-cancel" onclick="closeAddModal()">Cancel</button>
                     <button class="btn-modal btn-add" onclick="addEngine()">Add Engine</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Modal -->
+        <div id="settingsModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Settings</h3>
+                    <button class="close-btn" onclick="closeSettingsModal()">×</button>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="openInNewTab">Open search results in new tab</label>
+                    <input type="checkbox" id="openInNewTab" checked>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Backup Search Engines</label>
+                    <button class="btn-modal btn-add" onclick="exportEngines()">Export to JSON</button>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Restore Search Engines</label>
+                    <input type="file" id="importEngines" accept=".json">
+                    <button class="btn-modal btn-add" onclick="importEngines()">Import from JSON</button>
+                </div>
+
+                <div class="modal-actions">
+                    <button class="btn-modal btn-cancel" onclick="closeSettingsModal()">Close</button>
                 </div>
             </div>
         </div>
