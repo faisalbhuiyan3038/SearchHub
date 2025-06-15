@@ -561,11 +561,16 @@ function updateQueryPreview() {
     }
     
     // Site search
+    // Site search - FIXED VERSION
     if (siteSearch) {
         const sites = siteSearch.split(' OR ').filter(site => site.trim());
-        sites.forEach(site => {
-            queryParts.push(`site:${site.trim()}`);
-        });
+        if (sites.length === 1) {
+            queryParts.push(`site:${sites[0].trim()}`);
+        } else if (sites.length > 1) {
+            // Group multiple sites with OR operator
+            const siteQueries = sites.map(site => `site:${site.trim()}`);
+            queryParts.push(`(${siteQueries.join(' OR ')})`);
+        }
     }
     
     // Content location
