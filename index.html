@@ -1,6 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-EVHP5VJPLP"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+    
+      gtag('config', 'G-EVHP5VJPLP');
+    </script>
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SearchHub</title>
@@ -12,17 +23,6 @@
     
     <link rel="stylesheet" type="text/css" href="/public/searchHub.css">
 </head>
-
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-EVHP5VJPLP"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-EVHP5VJPLP');
-</script>
-
 <body>
     <div class="container">
         <div class="header">
@@ -36,6 +36,88 @@
             <input type="text" class="search-input" placeholder="Enter your search query..." id="searchInput">
             <button class="clear-btn" id="clearSearchBtn" onclick="clearSearch()">×</button>
             <button class="search-btn" onclick="performSearch()">Search</button>
+        </div>
+
+        <!-- Advanced Search Panel -->
+        <div class="advanced-search">
+            <button class="advanced-toggle" onclick="toggleAdvancedSearch()" aria-expanded="false">
+                <span>🔧 Advanced Search Options</span>
+                <span class="advanced-toggle-icon">▼</span>
+            </button>
+            
+            <div class="advanced-panel" id="advancedPanel">
+                <!-- Exact Phrase -->
+                <div class="operator-section">
+                    <div class="operator-title">📝 Exact Phrase</div>
+                    <div class="operator-controls">
+                        <input type="text" class="operator-input" id="exactPhrase" placeholder='e.g., "machine learning"'>
+                    </div>
+                </div>
+        
+                <!-- Exclude Words -->
+                <div class="operator-section">
+                    <div class="operator-title">❌ Exclude Words</div>
+                    <div class="operator-controls">
+                        <input type="text" class="operator-input" id="excludeWords" placeholder="e.g., -cars -motors">
+                    </div>
+                </div>
+        
+                <!-- Any of These Words (OR) -->
+                <div class="operator-section">
+                    <div class="operator-title">🔄 Any of These Words</div>
+                    <div class="operator-controls">
+                        <input type="text" class="operator-input" id="orWords" placeholder="e.g., cats OR dogs OR pets">
+                    </div>
+                </div>
+        
+                <!-- Site Search -->
+                <div class="operator-section">
+                    <div class="operator-title">🌐 Search Specific Sites</div>
+                    <div class="operator-controls">
+                        <input type="text" class="operator-input" id="siteSearch" placeholder="e.g., github.com or reddit.com">
+                    </div>
+                    <div class="quick-sites" style="margin-top: 10px;">
+                        <span class="site-chip" onclick="toggleSiteChip(this, 'reddit.com')">Reddit</span>
+                        <span class="site-chip" onclick="toggleSiteChip(this, 'github.com')">GitHub</span>
+                        <span class="site-chip" onclick="toggleSiteChip(this, 'stackoverflow.com')">Stack Overflow</span>
+                        <span class="site-chip" onclick="toggleSiteChip(this, 'site:.edu')">Universities</span>
+                        <span class="site-chip" onclick="toggleSiteChip(this, 'site:.gov')">Government</span>
+                    </div>
+                </div>
+        
+                <!-- Content Location -->
+                <div class="operator-section">
+                    <div class="operator-title">📍 Search In</div>
+                    <div class="operator-controls">
+                        <button class="operator-toggle" onclick="toggleContentLocation(this, 'intitle')" data-active="false">Title Only</button>
+                        <button class="operator-toggle" onclick="toggleContentLocation(this, 'intext')" data-active="false">Body Text</button>
+                        <input type="text" class="operator-input" id="contentLocationText" placeholder="Enter text to search for" style="display: none;">
+                    </div>
+                </div>
+        
+                <!-- File Types -->
+                <div class="operator-section">
+                    <div class="operator-title">📄 File Types</div>
+                    <div class="filetype-grid">
+                        <span class="filetype-chip" onclick="toggleFileType(this, 'pdf')">PDF</span>
+                        <span class="filetype-chip" onclick="toggleFileType(this, 'doc')">DOC</span>
+                        <span class="filetype-chip" onclick="toggleFileType(this, 'ppt')">PPT</span>
+                        <span class="filetype-chip" onclick="toggleFileType(this, 'xls')">XLS</span>
+                        <span class="filetype-chip" onclick="toggleFileType(this, 'txt')">TXT</span>
+                        <span class="filetype-chip" onclick="toggleFileType(this, 'csv')">CSV</span>
+                    </div>
+                </div>
+        
+                <!-- Query Preview -->
+                <div class="query-preview" id="queryPreview">
+                    Your search query will appear here...
+                </div>
+        
+                <!-- Clear All Operators -->
+                <div style="text-align: center; margin-top: 15px;">
+                    <button class="clear-operators" onclick="clearAllOperators()">Clear All Operators</button>
+                </div>
+            </div>
         </div>
 
         <div class="query-display" id="queryDisplay">

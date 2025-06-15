@@ -486,3 +486,222 @@ body {
         margin-top: 20px;
     }
 }
+
+/* Advanced Search Panel */
+.advanced-search {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    margin: 20px 0;
+    backdrop-filter: blur(10px);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.advanced-toggle {
+    background: none;
+    border: none;
+    color: white;
+    padding: 15px 25px;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.3s;
+}
+
+.advanced-toggle:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.advanced-toggle-icon {
+    transition: transform 0.3s;
+}
+
+.advanced-toggle[aria-expanded="true"] .advanced-toggle-icon {
+    transform: rotate(180deg);
+}
+
+.advanced-panel {
+    padding: 0 25px 25px;
+    display: none;
+    animation: slideDown 0.3s ease;
+}
+
+.advanced-panel.show {
+    display: block;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.operator-section {
+    margin-bottom: 25px;
+}
+
+.operator-title {
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.operator-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+}
+
+.operator-input {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    min-width: 150px;
+    flex: 1;
+}
+
+.operator-input:focus {
+    outline: none;
+    border-color: white;
+    background: white;
+}
+
+.operator-toggle {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 8px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.3s;
+}
+
+.operator-toggle:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.operator-toggle.active {
+    background: white;
+    color: #667eea;
+}
+
+.quick-sites {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.site-chip {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.3s;
+}
+
+.site-chip:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.site-chip.active {
+    background: white;
+    color: #667eea;
+}
+
+.filetype-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: 8px;
+}
+
+.filetype-chip {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    text-align: center;
+    transition: all 0.3s;
+}
+
+.filetype-chip:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.filetype-chip.active {
+    background: white;
+    color: #667eea;
+}
+
+.query-preview {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    padding: 12px;
+    margin-top: 15px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    color: white;
+    word-break: break-all;
+}
+
+.clear-operators {
+    background: #ff4757;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.3s;
+}
+
+.clear-operators:hover {
+    background: #ff3742;
+}
+
+@media (max-width: 768px) {
+    .advanced-toggle {
+        padding: 12px 20px;
+        font-size: 0.9rem;
+    }
+    
+    .advanced-panel {
+        padding: 0 20px 20px;
+    }
+    
+    .operator-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .operator-input {
+        min-width: unset;
+        width: 100%;
+    }
+    
+    .quick-sites,
+    .filetype-grid {
+        justify-content: center;
+    }
+}

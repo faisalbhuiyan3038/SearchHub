@@ -450,5 +450,213 @@ function importEngines() {
     }
 }
 
+// Advanced Search Variables
+let isAdvancedOpen = false;
+let activeFileTypes = new Set();
+let activeSites = new Set();
+let activeContentLocation = null;
+
+// Toggle advanced search panel
+function toggleAdvancedSearch() {
+    isAdvancedOpen = !isAdvancedOpen;
+    const panel = document.getElementById('advancedPanel');
+    const toggle = document.querySelector('.advanced-toggle');
+    
+    if (isAdvancedOpen) {
+        panel.classList.add('show');
+        toggle.setAttribute('aria-expanded', 'true');
+    } else {
+        panel.classList.remove('show');
+        toggle.setAttribute('aria-expanded', 'false');
+    }
+}
+
+// Toggle site chip
+function toggleSiteChip(element, site) {
+    if (activeSites.has(site)) {
+        activeSites.delete(site);
+        element.classList.remove('active');
+    } else {
+        activeSites.add(site);
+        element.classList.add('active');
+    }
+    updateSiteInput();
+    updateQueryPreview();
+}
+
+// Update site input field
+function updateSiteInput() {
+    const siteInput = document.getElementById('siteSearch');
+    const sites = Array.from(activeSites).join(' OR ');
+    siteInput.value = sites;
+}
+
+// Toggle file type
+function toggleFileType(element, type) {
+    if (activeFileTypes.has(type)) {
+        activeFileTypes.delete(type);
+        element.classList.remove('active');
+    } else {
+        activeFileTypes.add(type);
+        element.classList.add('active');
+    }
+    updateQueryPreview();
+}
+
+// Toggle content location
+function toggleContentLocation(element, type) {
+    const buttons = document.querySelectorAll('.operator-toggle');
+    const textInput = document.getElementById('contentLocationText');
+    
+    if (activeContentLocation === type) {
+        // Deactivate
+        activeContentLocation = null;
+        element.classList.remove('active');
+        element.setAttribute('data-active', 'false');
+        textInput.style.display = 'none';
+    } else {
+        // Activate this one, deactivate others
+        buttons.forEach(btn => {
+            btn.classList.remove('active');
+            btn.setAttribute('data-active', 'false');
+        });
+        activeContentLocation = type;
+        element.classList.add('active');
+        element.setAttribute('data-active', 'true');
+        textInput.style.display = 'block';
+        textInput.placeholder = `Text to search in ${type === 'intitle' ? 'title' : 'body'}`;
+    }
+    updateQueryPreview();
+}
+
+// Update query preview
+function updateQueryPreview() {
+    const baseQuery = document.getElementById('searchInput').value.trim();
+    const exactPhrase = document.getElementById('exactPhrase').value.trim();
+    const excludeWords = document.getElementById('excludeWords').value.trim();
+    const orWords = document.getElementById('orWords').value.trim();
+    const siteSearch = document.getElementById('siteSearch').value.trim();
+    const contentLocationText = document.getElementById('contentLocationText').value.trim();
+    
+    let queryParts = [];
+    
+    // Base query
+    if (baseQuery) queryParts.push(baseQuery);
+    
+    // Exact phrase
+    if (exactPhrase) {
+        queryParts.push(`"${exactPhrase}"`);
+    }
+    
+    // Exclude words
+    if (excludeWords) {
+        const excludes = excludeWords.split(' ').filter(word => word.trim())
+            .map(word => word.startsWith('-') ? word : `-${word}`);
+        queryParts.push(...excludes);
+    }
+    
+    // OR words
+    if (orWords) {
+        queryParts.push(`(${orWords})`);
+    }
+    
+    // Site search
+    if (siteSearch) {
+        const sites = siteSearch.split(' OR ').filter(site => site.trim());
+        sites.forEach(site => {
+            queryParts.push(`site:${site.trim()}`);
+        });
+    }
+    
+    // Content location
+    if (activeContentLocation && contentLocationText) {
+        queryParts.push(`${activeContentLocation}:"${contentLocationText}"`);
+    }
+    
+    // File types
+    if (activeFileTypes.size > 0) {
+        const fileTypes = Array.from(activeFileTypes);
+        if (fileTypes.length === 1) {
+            queryParts.push(`filetype:${fileTypes[0]}`);
+        } else {
+            const fileTypeQuery = fileTypes.map(type => `filetype:${type}`).join(' OR ');
+            queryParts.push(`(${fileTypeQuery})`);
+        }
+    }
+    
+    const finalQuery = queryParts.join(' ');
+    document.getElementById('queryPreview').textContent = finalQuery || 'Your search query will appear here...';
+    
+    return finalQuery;
+}
+
+// Clear all operators
+function clearAllOperators() {
+    // Clear inputs
+    document.getElementById('exactPhrase').value = '';
+    document.getElementById('excludeWords').value = '';
+    document.getElementById('orWords').value = '';
+    document.getElementById('siteSearch').value = '';
+    document.getElementById('contentLocationText').value = '';
+    
+    // Clear active states
+    activeFileTypes.clear();
+    activeSites.clear();
+    activeContentLocation = null;
+    
+    // Reset UI
+    document.querySelectorAll('.filetype-chip, .site-chip, .operator-toggle').forEach(chip => {
+        chip.classList.remove('active');
+        chip.setAttribute('data-active', 'false');
+    });
+    
+    document.getElementById('contentLocationText').style.display = 'none';
+    updateQueryPreview();
+}
+
+// Modified performSearch function to include operators
+function performSearchWithOperators() {
+    const finalQuery = updateQueryPreview();
+    if (finalQuery.trim()) {
+        currentQuery = finalQuery;
+        document.getElementById('currentQuery').textContent = currentQuery;
+        document.getElementById('queryDisplay').style.display = 'block';
+        document.getElementById('clearSearchBtn').style.display = 'block';
+        
+        // Update URL
+        const newUrl = `${window.location.origin}${window.location.pathname}?q=${encodeURIComponent(finalQuery)}`;
+        history.pushState({}, '', newUrl);
+    }
+}
+
+// Add event listeners for real-time preview updates
+document.addEventListener('DOMContentLoaded', function() {
+    const inputs = ['exactPhrase', 'excludeWords', 'orWords', 'siteSearch', 'contentLocationText'];
+    inputs.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.addEventListener('input', updateQueryPreview);
+        }
+    });
+    
+    // Also update when main search input changes
+    document.getElementById('searchInput').addEventListener('input', updateQueryPreview);
+});
+
+// Override the original performSearch to use operators
+const originalPerformSearch = performSearch;
+performSearch = function() {
+    if (isAdvancedOpen && (activeFileTypes.size > 0 || activeSites.size > 0 || 
+        document.getElementById('exactPhrase').value.trim() ||
+        document.getElementById('excludeWords').value.trim() ||
+        document.getElementById('orWords').value.trim() ||
+        document.getElementById('siteSearch').value.trim() ||
+        (activeContentLocation && document.getElementById('contentLocationText').value.trim()))) {
+        performSearchWithOperators();
+    } else {
+        originalPerformSearch();
+    }
+};
+
 // Initialize the app
 init();
