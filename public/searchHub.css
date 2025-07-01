@@ -705,3 +705,554 @@ body {
         justify-content: center;
     }
 }
+
+/* Advanced Search Panel Adjustments */
+.advanced-search {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    margin: 20px 0;
+    backdrop-filter: blur(10px);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    max-height: 400px; /* Limit height for desktop */
+    overflow-y: auto; /* Add scroll if needed */
+}
+
+.advanced-panel {
+    padding: 0 25px 25px;
+    display: none;
+    animation: slideDown 0.3s ease;
+}
+
+.operators-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.operator-section {
+    margin-bottom: 0;
+    flex: 1;
+    min-width: 250px; /* Ensure minimum width for readability */
+}
+
+.operator-title {
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.operator-controls {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 10px;
+    align-items: center;
+}
+
+.operator-input {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    min-width: 200px;
+    flex: 1;
+}
+
+.operator-input:focus {
+    outline: none;
+    border-color: white;
+    background: white;
+}
+
+/* Ensure engines grid is visible */
+.engines-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+    margin-top: 20px; /* Add some space above */
+}
+
+/* Media queries remain unchanged but can be adjusted */
+@media (max-width: 768px) {
+    .operators-row {
+        flex-direction: column;
+    }
+    .operator-section {
+        min-width: 100%;
+    }
+    .operator-input {
+        min-width: 100%;
+    }
+    .advanced-search {
+        max-height: none; /* Remove height limit on mobile */
+    }
+}
+
+/* Updated Search In Section */
+.search-in-section {
+    margin: 1.5rem 0;
+    text-align: center;
+    color: white;
+}
+
+.search-in-section .operator-title {
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.search-in-section .operator-controls {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.search-in-section .operator-toggle {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.3s;
+}
+
+.search-in-section .operator-toggle:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.search-in-section .operator-toggle.active {
+    background: white;
+    color: #667eea;
+}
+
+.search-in-section .operator-input {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    min-width: 15rem;
+    flex: 1;
+}
+
+/* Advanced Search Panel Adjustments */
+.advanced-search {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    margin: 1.5rem 0;
+    backdrop-filter: blur(10px);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.advanced-panel {
+    padding: 0 1.5rem 1.5rem;
+    display: none;
+    animation: slideDown 0.3s ease;
+}
+
+.operators-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    margin-bottom: 1.25rem;
+}
+
+.operator-section {
+    margin-bottom: 0;
+    flex: 1;
+    min-width: 15rem;
+}
+
+.operator-title {
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.625rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.operator-controls {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0.625rem;
+    align-items: center;
+}
+
+.operator-input {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem;
+    min-width: 12.5rem;
+    flex: 1;
+}
+
+.operator-input:focus {
+    outline: none;
+    border-color: white;
+    background: white;
+}
+
+/* Adjusted Site Search and File Types */
+#siteSearch {
+    max-width: 70rem; /* Slightly larger, using rem */
+}
+
+.filetype-grid {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.filetype-chip {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-size: 0.8rem;
+    text-align: center;
+    transition: all 0.3s;
+    min-width: 4rem; /* Reduced width, using rem */
+}
+
+.filetype-chip:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.filetype-chip.active {
+    background: white;
+    color: #667eea;
+}
+
+/* Quick Sites Chips */
+.quick-sites {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.625rem;
+    overflow-x: auto; /* Horizontal scroll on mobile */
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    padding-bottom: 0.25rem; /* Prevent cutoff */
+}
+
+.site-chip {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 0.375rem 0.75rem;
+    border-radius: 0.9375rem;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.3s;
+    white-space: nowrap; /* Prevent text wrapping */
+}
+
+.site-chip:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.site-chip.active {
+    background: white;
+    color: #667eea;
+}
+
+/* Ensure engines grid is visible */
+.engines-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+    margin-top: 1.25rem;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+    .operators-row {
+        flex-direction: column;
+    }
+    .operator-section {
+        min-width: 100%;
+    }
+    .operator-input {
+        min-width: 100%;
+    }
+    .filetype-grid {
+        justify-content: center;
+    }
+    .advanced-search {
+        max-height: none;
+    }
+    .search-in-section .operator-controls {
+        flex-direction: column;
+    }
+    .search-in-section .operator-input {
+        min-width: 100%;
+    }
+    .quick-sites {
+        justify-content: flex-start; /* Chips move to the right */
+        padding-left: 0.625rem; /* Add some padding */
+    }
+}
+
+@media (max-width: 480px) {
+    .search-in-section .operator-toggle {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.75rem;
+    }
+    .search-in-section .operator-input {
+        padding: 0.375rem 0.75rem;
+    }
+}
+
+/* Updated Search In Section */
+.search-in-section {
+    margin: 1.5rem 0;
+    text-align: center;
+    color: white;
+}
+
+.search-in-section .operator-title {
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.search-in-section .operator-controls {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.search-in-section .operator-toggle {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.3s;
+}
+
+.search-in-section .operator-toggle:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.search-in-section .operator-toggle.active {
+    background: white;
+    color: #667eea;
+}
+
+.search-in-section .operator-input {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    min-width: 15rem;
+    flex: 1;
+}
+
+/* Advanced Search Panel Adjustments */
+.advanced-search {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    margin: 1.5rem 0;
+    backdrop-filter: blur(10px);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.advanced-panel {
+    padding: 0 1.5rem 1.5rem;
+    display: none;
+    animation: slideDown 0.3s ease;
+}
+
+.operators-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    margin-bottom: 1.25rem;
+}
+
+.operator-section {
+    margin-bottom: 0;
+    flex: 1;
+    min-width: 0; /* Allow wrapping */
+}
+
+.operator-title {
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.625rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.operator-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.625rem;
+    align-items: center;
+}
+
+.operator-input {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem;
+    min-width: 12.5rem;
+    flex: 1;
+}
+
+.operator-input:focus {
+    outline: none;
+    border-color: white;
+    background: white;
+}
+
+/* Adjusted Site Search and File Types */
+#siteSearch {
+    max-width: 18rem;
+}
+
+.filetype-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.filetype-chip {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-size: 0.8rem;
+    text-align: center;
+    transition: all 0.3s;
+    min-width: 4rem;
+    flex: 0 0 auto; /* Prevent stretching */
+}
+
+.filetype-chip:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.filetype-chip.active {
+    background: white;
+    color: #667eea;
+}
+
+/* Quick Sites Chips */
+.quick-sites {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.625rem;
+    flex-wrap: wrap; /* Wrap on mobile */
+    overflow-x: hidden; /* Remove horizontal scroll */
+}
+
+.site-chip {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 0.375rem 0.75rem;
+    border-radius: 0.9375rem;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.3s;
+    white-space: nowrap;
+}
+
+.site-chip:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.site-chip.active {
+    background: white;
+    color: #667eea;
+}
+
+/* Ensure engines grid is visible */
+.engines-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+    margin-top: 1.25rem;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+    .operators-row {
+        flex-direction: column;
+    }
+    .operator-section {
+        min-width: 100%;
+    }
+    .operator-input {
+        min-width: 100%;
+    }
+    .filetype-grid {
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+    .advanced-search {
+        max-height: none;
+    }
+    .search-in-section .operator-controls {
+        flex-direction: column;
+    }
+    .search-in-section .operator-input {
+        min-width: 100%;
+    }
+    .quick-sites {
+        flex-wrap: wrap; /* Wrap chips instead of overflow */
+    }
+    #siteSearch {
+        max-width: 100%; /* Full width on mobile */
+    }
+}
+
+@media (max-width: 480px) {
+    .search-in-section .operator-toggle {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.75rem;
+    }
+    .search-in-section .operator-input {
+        padding: 0.375rem 0.75rem;
+    }
+    .filetype-chip {
+        min-width: 3.5rem; /* Slightly smaller on very small screens */
+    }
+}

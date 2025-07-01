@@ -32,6 +32,16 @@
             <h2>What Should I Search With Today?</h2>
         </div>
 
+        <!-- Updated Search In Section -->
+        <div class="search-in-section">
+            <div class="operator-title">📍 Search In</div>
+            <div class="operator-controls">
+                <button class="operator-toggle" onclick="toggleContentLocation(this, 'intitle')" data-active="false">Title Only</button>
+                <button class="operator-toggle" onclick="toggleContentLocation(this, 'intext')" data-active="false">Body Text</button>
+                <input type="text" class="operator-input" id="contentLocationText" placeholder="Enter text to search for" style="display: none;">
+            </div>
+        </div>
+
         <div class="search-box">
             <input type="text" class="search-input" placeholder="Enter your search query..." id="searchInput">
             <button class="clear-btn" id="clearSearchBtn" onclick="clearSearch()">×</button>
@@ -46,65 +56,57 @@
             </button>
             
             <div class="advanced-panel" id="advancedPanel">
-                <!-- Exact Phrase -->
-                <div class="operator-section">
-                    <div class="operator-title">📝 Exact Phrase</div>
-                    <div class="operator-controls">
-                        <input type="text" class="operator-input" id="exactPhrase" placeholder='e.g., "machine learning"'>
+                <div class="operators-row">
+                    <!-- Exact Phrase -->
+                    <div class="operator-section">
+                        <div class="operator-title">📝 Exact Phrase</div>
+                        <div class="operator-controls">
+                            <input type="text" class="operator-input" id="exactPhrase" placeholder='e.g., "machine learning"'>
+                        </div>
+                    </div>
+            
+                    <!-- Exclude Words -->
+                    <div class="operator-section">
+                        <div class="operator-title">❌ Exclude Words</div>
+                        <div class="operator-controls">
+                            <input type="text" class="operator-input" id="excludeWords" placeholder="e.g., -cars -motors">
+                        </div>
+                    </div>
+            
+                    <!-- Any of These Words (OR) -->
+                    <div class="operator-section">
+                        <div class="operator-title">🔄 Any of These Words</div>
+                        <div class="operator-controls">
+                            <input type="text" class="operator-input" id="orWords" placeholder="e.g., cats OR dogs OR pets">
+                        </div>
                     </div>
                 </div>
-        
-                <!-- Exclude Words -->
-                <div class="operator-section">
-                    <div class="operator-title">❌ Exclude Words</div>
-                    <div class="operator-controls">
-                        <input type="text" class="operator-input" id="excludeWords" placeholder="e.g., -cars -motors">
+
+                <div class="operators-row">
+                    <!-- Site Search and File Types in one row -->
+                    <div class="operator-section">
+                        <div class="operator-title">🌐 Search Specific Sites</div>
+                        <div class="operator-controls">
+                            <input type="text" class="operator-input" id="siteSearch" placeholder="e.g., github.com or reddit.com">
+                        </div>
+                        <div class="quick-sites" style="margin-top: 1rem;">
+                            <span class="site-chip" onclick="toggleSiteChip(this, 'reddit.com')">Reddit</span>
+                            <span class="site-chip" onclick="toggleSiteChip(this, 'github.com')">GitHub</span>
+                            <span class="site-chip" onclick="toggleSiteChip(this, 'stackoverflow.com')">Stack Overflow</span>
+                            <span class="site-chip" onclick="toggleSiteChip(this, 'site:.edu')">Universities</span>
+                            <span class="site-chip" onclick="toggleSiteChip(this, 'site:.gov')">Government</span>
+                        </div>
                     </div>
-                </div>
-        
-                <!-- Any of These Words (OR) -->
-                <div class="operator-section">
-                    <div class="operator-title">🔄 Any of These Words</div>
-                    <div class="operator-controls">
-                        <input type="text" class="operator-input" id="orWords" placeholder="e.g., cats OR dogs OR pets">
-                    </div>
-                </div>
-        
-                <!-- Site Search -->
-                <div class="operator-section">
-                    <div class="operator-title">🌐 Search Specific Sites</div>
-                    <div class="operator-controls">
-                        <input type="text" class="operator-input" id="siteSearch" placeholder="e.g., github.com or reddit.com">
-                    </div>
-                    <div class="quick-sites" style="margin-top: 10px;">
-                        <span class="site-chip" onclick="toggleSiteChip(this, 'reddit.com')">Reddit</span>
-                        <span class="site-chip" onclick="toggleSiteChip(this, 'github.com')">GitHub</span>
-                        <span class="site-chip" onclick="toggleSiteChip(this, 'stackoverflow.com')">Stack Overflow</span>
-                        <span class="site-chip" onclick="toggleSiteChip(this, 'site:.edu')">Universities</span>
-                        <span class="site-chip" onclick="toggleSiteChip(this, 'site:.gov')">Government</span>
-                    </div>
-                </div>
-        
-                <!-- Content Location -->
-                <div class="operator-section">
-                    <div class="operator-title">📍 Search In</div>
-                    <div class="operator-controls">
-                        <button class="operator-toggle" onclick="toggleContentLocation(this, 'intitle')" data-active="false">Title Only</button>
-                        <button class="operator-toggle" onclick="toggleContentLocation(this, 'intext')" data-active="false">Body Text</button>
-                        <input type="text" class="operator-input" id="contentLocationText" placeholder="Enter text to search for" style="display: none;">
-                    </div>
-                </div>
-        
-                <!-- File Types -->
-                <div class="operator-section">
-                    <div class="operator-title">📄 File Types</div>
-                    <div class="filetype-grid">
-                        <span class="filetype-chip" onclick="toggleFileType(this, 'pdf')">PDF</span>
-                        <span class="filetype-chip" onclick="toggleFileType(this, 'doc')">DOC</span>
-                        <span class="filetype-chip" onclick="toggleFileType(this, 'ppt')">PPT</span>
-                        <span class="filetype-chip" onclick="toggleFileType(this, 'xls')">XLS</span>
-                        <span class="filetype-chip" onclick="toggleFileType(this, 'txt')">TXT</span>
-                        <span class="filetype-chip" onclick="toggleFileType(this, 'csv')">CSV</span>
+                    <div class="operator-section">
+                        <div class="operator-title">📄 File Types</div>
+                        <div class="filetype-grid">
+                            <span class="filetype-chip" onclick="toggleFileType(this, 'pdf')">PDF</span>
+                            <span class="filetype-chip" onclick="toggleFileType(this, 'doc')">DOC</span>
+                            <span class="filetype-chip" onclick="toggleFileType(this, 'ppt')">PPT</span>
+                            <span class="filetype-chip" onclick="toggleFileType(this, 'xls')">XLS</span>
+                            <span class="filetype-chip" onclick="toggleFileType(this, 'txt')">TXT</span>
+                            <span class="filetype-chip" onclick="toggleFileType(this, 'csv')">CSV</span>
+                        </div>
                     </div>
                 </div>
         
@@ -114,7 +116,7 @@
                 </div>
         
                 <!-- Clear All Operators -->
-                <div style="text-align: center; margin-top: 15px;">
+                <div style="text-align: center; margin-top: 1rem;">
                     <button class="clear-operators" onclick="clearAllOperators()">Clear All Operators</button>
                 </div>
             </div>
@@ -138,7 +140,7 @@
                 </div>
             </div>
             
-            <button class="btn" onclick="resetEngines()" style="margin-top: 10px;">Reset to Default</button>
+            <button class="btn" onclick="resetEngines()" style="margin-top: 1rem;">Reset to Default</button>
         </div>
 
         <!-- Add Engine Modal -->

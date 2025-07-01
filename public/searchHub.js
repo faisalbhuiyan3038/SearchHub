@@ -79,7 +79,9 @@ const defaultEngines = [
     }
 ];
 
+// Global variable to track the latest query and timeout
 let currentQuery = '';
+let urlUpdateTimeout = null;
 let searchEngines = [];
 let isEditMode = false;
 let openInNewTab = true;
@@ -91,7 +93,87 @@ function init() {
     handleUrlQuery();
     renderEngines();
     setupSettings();
+    setupRealTimeUpdates();
 }
+
+// New function to set up real-time event listeners
+function setupRealTimeUpdates() {
+    const inputs = ['searchInput', 'exactPhrase', 'excludeWords', 'orWords', 'siteSearch', 'contentLocationText'];
+    inputs.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.addEventListener('input', updateQueryAndPreview);
+            element.addEventListener('change', updateQueryAndPreview); // For select/click events
+        }
+    });
+
+    // Listen for chip clicks
+    document.querySelectorAll('.site-chip, .filetype-chip').forEach(chip => {
+        chip.addEventListener('click', updateQueryAndPreview);
+    });
+}
+
+// Updated function to handle real-time query updates and preview
+function updateQueryAndPreview() {
+    const baseQuery = document.getElementById('searchInput').value.trim();
+    const exactPhrase = document.getElementById('exactPhrase').value.trim();
+    const excludeWords = document.getElementById('excludeWords').value.trim();
+    const orWords = document.getElementById('orWords').value.trim();
+    const siteSearch = document.getElementById('siteSearch').value.trim();
+    const contentLocationText = document.getElementById('contentLocationText').value.trim();
+    
+    let queryParts = [];
+    
+    if (baseQuery) queryParts.push(baseQuery);
+    if (exactPhrase) queryParts.push(`"${exactPhrase}"`);
+    if (excludeWords) {
+        const excludes = excludeWords.split(' ').filter(word => word.trim())
+            .map(word => word.startsWith('-') ? word : `-${word}`);
+        queryParts.push(...excludes);
+    }
+    if (orWords) queryParts.push(`(${orWords})`);
+    if (siteSearch) {
+        const sites = siteSearch.split(' OR ').filter(site => site.trim());
+        if (sites.length === 1) {
+            queryParts.push(`site:${sites[0].trim()}`);
+        } else if (sites.length > 1) {
+            const siteQueries = sites.map(site => `site:${site.trim()}`);
+            queryParts.push(`(${siteQueries.join(' OR ')})`);
+        }
+    }
+    if (activeContentLocation && contentLocationText) {
+        queryParts.push(`${activeContentLocation}:"${contentLocationText}"`);
+    }
+    if (activeFileTypes.size > 0) {
+        const fileTypes = Array.from(activeFileTypes);
+        if (fileTypes.length === 1) {
+            queryParts.push(`filetype:${fileTypes[0]}`);
+        } else {
+            const fileTypeQuery = fileTypes.map(type => `filetype:${type}`).join(' OR ');
+            queryParts.push(`(${fileTypeQuery})`);
+        }
+    }
+    
+    const finalQuery = queryParts.join(' ');
+    document.getElementById('queryPreview').textContent = finalQuery || 'Your search query will appear here...';
+    
+    // Update currentQuery instantly
+    currentQuery = finalQuery;
+
+    // Clear previous timeout and set new one for URL update
+    if (urlUpdateTimeout) clearTimeout(urlUpdateTimeout);
+    urlUpdateTimeout = setTimeout(() => {
+        if (currentQuery.trim()) {
+            const newUrl = `${window.location.origin}${window.location.pathname}?q=${encodeURIComponent(currentQuery)}`;
+            history.pushState({}, '', newUrl);
+            document.getElementById('currentQuery').textContent = currentQuery;
+            document.getElementById('queryDisplay').style.display = 'block';
+            document.getElementById('clearSearchBtn').style.display = 'block';
+        }
+    }, 5000); // 5-second delay
+}
+
+
 
 // Load engines from storage or use defaults
 function loadEngines() {
@@ -129,37 +211,41 @@ function handleUrlQuery() {
 }
 
 // Perform search
+// Updated performSearch function
 function performSearch() {
-    const query = document.getElementById('searchInput').value.trim();
-    if (query) {
-        currentQuery = query;
+    updateQueryAndPreview(); // Ensure latest query is reflected
+    if (currentQuery.trim()) {
         document.getElementById('currentQuery').textContent = currentQuery;
         document.getElementById('queryDisplay').style.display = 'block';
         document.getElementById('clearSearchBtn').style.display = 'block';
-        // Update URL without page reload
-        const newUrl = `${window.location.origin}${window.location.pathname}?q=${encodeURIComponent(query)}`;
+        const newUrl = `${window.location.origin}${window.location.pathname}?q=${encodeURIComponent(currentQuery)}`;
         history.pushState({}, '', newUrl);
     }
 }
 
-// Clear search input
 function clearSearch() {
     currentQuery = '';
     document.getElementById('searchInput').value = '';
-    document.getElementById('currentQuery').textContent = '';
-    document.getElementById('queryDisplay').style.display = 'none';
-    document.getElementById('clearSearchBtn').style.display = 'none';
-    // Clear URL query parameter
+    document.getElementById('exactPhrase').value = '';
+    document.getElementById('excludeWords').value = '';
+    document.getElementById('orWords').value = '';
+    document.getElementById('siteSearch').value = '';
+    document.getElementById('contentLocationText').value = '';
+    activeFileTypes.clear();
+    activeSites.clear();
+    activeContentLocation = null;
+    document.querySelectorAll('.filetype-chip, .site-chip, .operator-toggle').forEach(chip => {
+        chip.classList.remove('active');
+        chip.setAttribute('data-active', 'false');
+    });
+    document.getElementById('contentLocationText').style.display = 'none';
+    updateQueryAndPreview();
+    if (urlUpdateTimeout) clearTimeout(urlUpdateTimeout);
     const newUrl = `${window.location.origin}${window.location.pathname}`;
     history.pushState({}, '', newUrl);
+    document.getElementById('queryDisplay').style.display = 'none';
+    document.getElementById('clearSearchBtn').style.display = 'none';
 }
-
-// Handle Enter key in search input
-document.getElementById('searchInput').addEventListener('keypress', function (e) {
-    if (e.key === 'Enter') {
-        performSearch();
-    }
-});
 
 // Update search input event listener to show/hide clear button
 document.getElementById('searchInput').addEventListener('input', function () {
@@ -184,7 +270,7 @@ function setupSettings() {
     });
 }
 
-// Render search engines
+// Updated renderEngines to use instant query
 function renderEngines() {
     const grid = document.getElementById('enginesGrid');
     grid.innerHTML = '';
@@ -195,7 +281,6 @@ function renderEngines() {
         card.setAttribute('draggable', isEditMode ? 'true' : 'false');
         card.dataset.index = index;
 
-        // Drag and drop event listeners
         if (isEditMode) {
             card.addEventListener('dragstart', dragStart);
             card.addEventListener('dragover', dragOver);
@@ -205,7 +290,6 @@ function renderEngines() {
             card.addEventListener('dragend', dragEnd);
         }
 
-        // Create elements
         const removeBtn = document.createElement('button');
         removeBtn.className = 'remove-btn';
         removeBtn.innerHTML = '×';
@@ -231,7 +315,6 @@ function renderEngines() {
         descDiv.className = 'engine-description';
         descDiv.textContent = engine.description || '';
 
-        // Append elements
         faviconDiv.appendChild(faviconImg);
         card.appendChild(removeBtn);
         card.appendChild(faviconDiv);
