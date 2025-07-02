@@ -3,79 +3,92 @@ const defaultEngines = [
         name: 'Google',
         url: 'https://www.google.com/search?q={query}',
         description: 'The most popular search engine',
-        favicon: 'https://www.google.com/favicon.ico'
+        favicon: 'https://www.google.com/favicon.ico',
+        isAI: false
     },
     {
         name: 'Bing',
         url: 'https://www.bing.com/search?q={query}',
         description: 'Microsoft\'s search engine',
-        favicon: 'https://www.bing.com/favicon.ico'
+        favicon: 'https://www.bing.com/favicon.ico',
+        isAI: false
     },
     {
         name: 'DuckDuckGo',
         url: 'https://duckduckgo.com/?q={query}',
         description: 'Privacy-focused search',
-        favicon: 'https://duckduckgo.com/favicon.ico'
+        favicon: 'https://duckduckgo.com/favicon.ico',
+        isAI: false
     },
     {
         name: 'Yandex',
         url: 'https://yandex.com/search/?text={query}',
         description: 'Russian search engine',
-        favicon: 'https://yandex.com/favicon.ico'
+        favicon: 'https://yandex.com/favicon.ico',
+        isAI: false
     },
     {
         name: 'Brave',
         url: 'https://search.brave.com/search?q={query}',
         description: 'Brave\'s privacy-focused search engine',
-        favicon: 'https://www.google.com/s2/favicons?domain=search.brave.com&sz=32'
+        favicon: 'https://www.google.com/s2/favicons?domain=search.brave.com&sz=32',
+        isAI: false
     },
     {
         name: 'SearX',
         url: 'https://searx.fmhy.net/search?q={query}',
         description: 'A privacy-respecting metasearch engine',
-        favicon: 'https://www.google.com/s2/favicons?domain=searx.fmhy.net&sz=32'
+        favicon: 'https://www.google.com/s2/favicons?domain=searx.fmhy.net&sz=32',
+        isAI: false
     },
     {
         name: 'Mojeek',
         url: 'https://www.mojeek.com/search?q={query}',
         description: 'British search engine with its own index',
-        favicon: 'https://www.mojeek.com/favicon.ico'
+        favicon: 'https://www.mojeek.com/favicon.ico',
+        isAI: false
     },
     {
         name: 'Qwant',
         url: 'https://www.qwant.com/?q={query}',
         description: 'European search engine focused on privacy',
-        favicon: 'https://www.qwant.com/favicon.ico'
+        favicon: 'https://www.qwant.com/favicon.ico',
+        isAI: false
     },
     {
         name: 'Perplexity',
         url: 'https://www.perplexity.ai/search?q={query}',
         description: 'AI-powered search engine',
-        favicon: 'https://www.perplexity.ai/favicon.ico'
+        favicon: 'https://www.perplexity.ai/favicon.ico',
+        isAI: true
     },
     {
         name: 'ChatGPT',
         url: 'https://chagpt.com/?q={query}',
         description: 'OpenAI\'s conversational AI',
-        favicon: 'https://chatgpt.com/favicon.ico'
+        favicon: 'https://chatgpt.com/favicon.ico',
+        isAI: true
     },
     {
         name: 'Grok',
         url: 'https://grok.com/?q={query}',
         description: 'Elon Musk\'s AI search engine',
-        favicon: 'https://grok.com/favicon.ico'
+        favicon: 'https://grok.com/favicon.ico',
+        isAI: true
     },
     {
         name: 'Scira',
         url: 'https://scira.ai/?q={query}',
         description: 'AI search powered by Grok',
-        favicon: 'https://scira.ai/favicon.ico'
+        favicon: 'https://scira.ai/favicon.ico',
+        isAI: true
     },
     {
         name: 'Copilot',
         url: 'https://copilot.microsoft.com/?q={query}',
         description: 'Microsoft\'s AI-powered search assistant',
-        favicon: 'https://copilot.microsoft.com/favicon.ico'
+        favicon: 'https://copilot.microsoft.com/favicon.ico',
+        isAI: true
     }
 ];
 
@@ -86,11 +99,12 @@ let searchEngines = [];
 let isEditMode = false;
 let openInNewTab = true;
 
-// Initialize
+// Update the init function
 function init() {
     loadEngines();
     loadSettings();
     handleUrlQuery();
+    updateQueryAndPreview(); // Initialize preview
     renderEngines();
     setupSettings();
     setupRealTimeUpdates();
@@ -210,19 +224,21 @@ function handleUrlQuery() {
     }
 }
 
-// Perform search
-// Updated performSearch function
+// Replace the performSearch function
 function performSearch() {
-    updateQueryAndPreview(); // Ensure latest query is reflected
+    updateQueryAndPreview();
     if (currentQuery.trim()) {
         document.getElementById('currentQuery').textContent = currentQuery;
         document.getElementById('queryDisplay').style.display = 'block';
         document.getElementById('clearSearchBtn').style.display = 'block';
         const newUrl = `${window.location.origin}${window.location.pathname}?q=${encodeURIComponent(currentQuery)}`;
         history.pushState({}, '', newUrl);
+        // Apply fade to AI engines if operators are used
+        checkAndApplyAIFade();
     }
 }
 
+// Update the clearSearch function
 function clearSearch() {
     currentQuery = '';
     document.getElementById('searchInput').value = '';
@@ -245,8 +261,16 @@ function clearSearch() {
     history.pushState({}, '', newUrl);
     document.getElementById('queryDisplay').style.display = 'none';
     document.getElementById('clearSearchBtn').style.display = 'none';
+    // Remove fade from AI engines when cleared
+    checkAndApplyAIFade();
 }
 
+// Handle Enter key in search input
+document.getElementById('searchInput').addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') {
+        performSearch();
+    }
+});
 // Update search input event listener to show/hide clear button
 document.getElementById('searchInput').addEventListener('input', function () {
     document.getElementById('clearSearchBtn').style.display = this.value ? 'block' : 'none';
@@ -270,7 +294,7 @@ function setupSettings() {
     });
 }
 
-// Updated renderEngines to use instant query
+// Replace the renderEngines function
 function renderEngines() {
     const grid = document.getElementById('enginesGrid');
     grid.innerHTML = '';
@@ -278,6 +302,10 @@ function renderEngines() {
     searchEngines.forEach((engine, index) => {
         const card = document.createElement('div');
         card.className = 'engine-card';
+        // Only apply fade if operators are active, not on initial load
+        if (engine.isAI && areAdvancedOperatorsActive()) {
+            card.classList.add('ai-faded');
+        }
         card.setAttribute('draggable', isEditMode ? 'true' : 'false');
         card.dataset.index = index;
 
@@ -321,7 +349,7 @@ function renderEngines() {
         card.appendChild(nameDiv);
         card.appendChild(descDiv);
 
-        if (!isEditMode) {
+        if (!isEditMode && !card.classList.contains('ai-faded')) {
             card.addEventListener('click', (e) => {
                 if (e.target === removeBtn) return;
                 if (currentQuery) {
@@ -334,6 +362,33 @@ function renderEngines() {
         }
 
         grid.appendChild(card);
+    });
+}
+
+// Replace the areAdvancedOperatorsActive function
+function areAdvancedOperatorsActive() {
+    const previewText = document.getElementById('queryPreview').textContent;
+    if (previewText === 'Your search query will appear here...') return false;
+    const baseQuery = document.getElementById('searchInput').value.trim();
+    const hasOperators = previewText.includes('site:') || previewText.includes('filetype:') || 
+                        previewText.includes('-') || previewText.includes('"') || 
+                        previewText.includes('OR') || previewText.includes('intitle:') || 
+                        previewText.includes('intext:');
+    return hasOperators && previewText !== baseQuery;
+}
+
+// Replace the checkAndApplyAIFade function
+function checkAndApplyAIFade() {
+    console.log("inside check and apply func");
+    const cards = document.querySelectorAll('.engine-card');
+    cards.forEach(card => {
+        const engineIndex = card.dataset.index;
+        const engine = searchEngines[engineIndex];
+        if (engine.isAI && areAdvancedOperatorsActive()) {
+            card.classList.add('ai-faded');
+        } else {
+            card.classList.remove('ai-faded');
+        }
     });
 }
 
@@ -700,6 +755,7 @@ function clearAllOperators() {
     
     document.getElementById('contentLocationText').style.display = 'none';
     updateQueryPreview();
+    checkAndApplyAIFade();
 }
 
 // Modified performSearch function to include operators
@@ -714,6 +770,8 @@ function performSearchWithOperators() {
         // Update URL
         const newUrl = `${window.location.origin}${window.location.pathname}?q=${encodeURIComponent(finalQuery)}`;
         history.pushState({}, '', newUrl);
+        // Apply fade to AI engines if operators are used
+        checkAndApplyAIFade();
     }
 }
 
@@ -741,6 +799,8 @@ performSearch = function() {
         document.getElementById('siteSearch').value.trim() ||
         (activeContentLocation && document.getElementById('contentLocationText').value.trim()))) {
         performSearchWithOperators();
+        // Apply fade to AI engines if operators are used
+        checkAndApplyAIFade();
     } else {
         originalPerformSearch();
     }

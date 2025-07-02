@@ -1256,3 +1256,70 @@ body {
         min-width: 3.5rem; /* Slightly smaller on very small screens */
     }
 }
+
+/* Engine Card Fade and Disable */
+.engine-card.ai-faded {
+    opacity: 0.4;
+    pointer-events: none; /* Makes cards unclickable */
+    filter: grayscale(50%);
+    transition: opacity 0.3s ease;
+}
+
+.engine-card.ai-faded:hover {
+    transform: none;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Ensure engines grid is visible */
+.engines-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+    margin-top: 1.25rem;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+    .operators-row {
+        flex-direction: column;
+    }
+    .operator-section {
+        min-width: 100%;
+    }
+    .operator-input {
+        min-width: 100%;
+    }
+    .filetype-grid {
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+    .advanced-search {
+        max-height: none;
+    }
+    .search-in-section .operator-controls {
+        flex-direction: column;
+    }
+    .search-in-section .operator-input {
+        min-width: 100%;
+    }
+    .quick-sites {
+        flex-wrap: wrap;
+    }
+    #siteSearch {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .search-in-section .operator-toggle {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.75rem;
+    }
+    .search-in-section .operator-input {
+        padding: 0.375rem 0.75rem;
+    }
+    .filetype-chip {
+        min-width: 3.5rem;
+    }
+}
